@@ -8,7 +8,7 @@ const Sidebar = (props) => {
         <div className="col-5">
             <Searchbar handleFilter={props.handleFilter}/>
             {!(props.listLoaded) && <p>Loading...</p>}
-            <div className="container sidebar">
+            <div className="container info">
                 {props.data.map(
                     country => (
                         <Countrycard select_country={props.select_country} key={country.alpha3Code} data={country} />

@@ -18,8 +18,25 @@
   border-style: none;
 }
 
-.sidebar {
+.cinfo {
+  background-color: rgba(255, 255, 255, 0.75);
+  height: 100%;
+  width:100%;
+  margin: 0;
+}
+
+.country-big {
+  background-repeat:no-repeat;
+  background-position: center center;
+}
+
+.bg {
+  max-width:100%;
+  max-height:100%;
+}
+
+.info {
   height: 90vh;
   overflow-y: auto;
-  display: block;
+  display:block;
 }

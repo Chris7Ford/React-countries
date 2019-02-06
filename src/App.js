@@ -65,6 +65,7 @@ class App extends Component {
     }
 
     select_country = (data) => {
+      console.log("In the parent function")
       this.setState({
         country: data
       })
@@ -76,7 +77,7 @@ class App extends Component {
         <div className="container-fluid">
           <div className="row">
               <Sidebar select_country={this.select_country} handleFilter={this.handleFilter} {...this.state} toggle_render_true={this.toggle_render_true}/>
-              {this.state.country && <Countryinfo data={this.state.country} render_neighbor={this.state.render_neighbor} toggle_render_false={this.toggle_render_false} toggle_render_true={this.toggle_render_true}/>}
+              {this.state.country && <Countryinfo select_country={this.select_country} data={this.state.country} render_neighbor={this.state.render_neighbor} toggle_render_false={this.toggle_render_false} toggle_render_true={this.toggle_render_true}/>}
           </div>
         </div>
       </div>

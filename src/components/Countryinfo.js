@@ -9,6 +9,7 @@ class Countryinfo extends React.Component {
             neighbors_loaded: false
         }
         this.get_neighboring_flags = this.get_neighboring_flags.bind(this);
+        this.select_neighbor = this.select_neighbor.bind(this);
     }
 
     get_neighboring_flags = (props) => {
@@ -21,8 +22,17 @@ class Countryinfo extends React.Component {
             });
         }
         setTimeout(() => {
-            this.props.toggle_render();
+            this.props.toggle_render_false();
         }, 300);
+    }
+
+    select_neighbor = (code) => {
+        this.props.toggle_render_true();
+        fetch(`https://restcountries.eu/rest/v2/alpha/${code}`)
+        .then(res => res.json())
+        .then(data => {
+            this.props.select_country(data)
+      });
     }
 
     componentDidMount() {
@@ -31,6 +41,9 @@ class Countryinfo extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        this.setState({
+            neighbors: Array.from(new Set(this.state.neighbors))
+        })
         setTimeout(() => {
             if (this.props.render_neighbor)
                 this.get_neighboring_flags(this.props);
@@ -50,7 +63,7 @@ class Countryinfo extends React.Component {
                         Subregion: {this.props.data.subregion} <br />
                         Population: {this.props.data.population} <br />
                         Area: {this.props.data.area} <br />
-                        If you originated from {this.props.data.name}, then you are {this.props.data.demonym} <br />
+                        {/*If you originated from {this.props.data.name}, then you are {this.props.data.demonym} <br />*/}
                         Currencies: {this.props.data.currencies.map(currency => (
                             `${currency.name} (${currency.symbol}) `
                         ))} <br />
@@ -58,7 +71,7 @@ class Countryinfo extends React.Component {
                             `${currency.name} (${currency.nativeName}) `
                         ))} <br />
                         Neighbors: {this.state.neighbors_loaded && this.state.neighbors.map(neighbor => (
-                            <img src={neighbor} className="thumb" key={neighbor.split("/")[neighbor.length - 1]}/>
+                            <img onClick={() => {this.select_neighbor(neighbor.split("/").pop().split(".")[0])}} src={neighbor} className="thumb" key={neighbor.split("/")[neighbor.length - 1]}/>
                         ))}
                     </p>
                     <a href="#" className="btn btn-primary">More information</a>

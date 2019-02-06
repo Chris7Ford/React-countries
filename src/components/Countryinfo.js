@@ -6,10 +6,12 @@ class Countryinfo extends React.Component {
         super();
         this.state = {
             neighbors: null,
-            neighbors_loaded: false
+            neighbors_loaded: false,
+            wikiHTML: null
         }
         this.get_neighboring_flags = this.get_neighboring_flags.bind(this);
         this.select_neighbor = this.select_neighbor.bind(this);
+        this.get_wiki_info = this.get_wiki_info.bind(this);
     }
 
     get_neighboring_flags = (props) => {
@@ -35,12 +37,26 @@ class Countryinfo extends React.Component {
       });
     }
 
+    get_wiki_info = () => {
+        console.log("we are in the function");
+        fetch(`https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&titles=${this.props.data.name.split(" ").join("_").toLowerCase()}&redirects=true&origin=*&exsentences=10&formatversion=2`)
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+            this.setState({
+                wikiHTML: data.query.pages[Object.keys(data.query.pages)[0]].extract.replace(/<\/?[^>]+(>|$)/g, "")
+            }, () => {console.log(this.state)})
+      });
+    }
+
     componentDidMount() {
         if (this.props.render_neighbor)
             this.get_neighboring_flags(this.props);
+        this.get_wiki_info();
     }
 
     componentWillReceiveProps(nextProps) {
+        this.get_wiki_info();
         this.setState({
             neighbors: Array.from(new Set(this.state.neighbors))
         })
@@ -72,7 +88,10 @@ class Countryinfo extends React.Component {
                         ))} <br />
                         Neighbors: {this.state.neighbors_loaded && this.state.neighbors.map(neighbor => (
                             <img onClick={() => {this.select_neighbor(neighbor.split("/").pop().split(".")[0])}} src={neighbor} className="thumb" key={neighbor.split("/")[neighbor.length - 1]}/>
-                        ))}
+                        ))} <br /><br /><br />
+                        <div className="content">
+                            {this.state.wikiHTML}
+                        </div>
                     </p>
                     <a href="#" className="btn btn-primary">More information</a>
                   </div>

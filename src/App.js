@@ -12,10 +12,13 @@ class App extends Component {
       country: null,
       data: [],
       filtered_data: [],
-      listLoaded: false
+      listLoaded: false,
+      render_neighbor: true
     }
     this.handleFilter = this.handleFilter.bind(this);
     this.select_country = this.select_country.bind(this);
+    this.toggle_render_true = this.toggle_render_true.bind(this);
+    this.toggle_render_false = this.toggle_render_false.bind(this);
   }
 
   componentDidMount() {
@@ -28,6 +31,18 @@ class App extends Component {
           filtered_data: data
         })
       });
+    }
+
+    toggle_render_true = () => {
+      this.setState({
+        render_neighbor: true
+      })
+    }
+
+    toggle_render_false = () => {
+      this.setState({
+        render_neighbor: false
+      })
     }
 
     handleFilter = (e) => {
@@ -47,7 +62,6 @@ class App extends Component {
           )
         })
       })
-      console.log(this.state);
     }
 
     select_country = (data) => {
@@ -61,8 +75,8 @@ class App extends Component {
       <div className="App">
         <div className="container-fluid">
           <div className="row">
-              <Sidebar select_country={this.select_country} data={this.state.filtered_data} listLoaded={this.state.listLoaded} handleFilter={this.handleFilter}/>
-              {this.state.country && <Countryinfo data={this.state.country} />}
+              <Sidebar select_country={this.select_country} handleFilter={this.handleFilter} {...this.state} toggle_render_true={this.toggle_render_true}/>
+              {this.state.country && <Countryinfo data={this.state.country} render_neighbor={this.state.render_neighbor} toggle_render_false={this.toggle_render_false} toggle_render_true={this.toggle_render_true}/>}
           </div>
         </div>
       </div>

@@ -9,9 +9,9 @@ const Sidebar = (props) => {
             <Searchbar handleFilter={props.handleFilter}/>
             {!(props.listLoaded) && <p>Loading...</p>}
             <div className="container info">
-                {props.data.map(
+                {props.filtered_data.map(
                     country => (
-                        <Countrycard select_country={props.select_country} key={country.alpha3Code} data={country} />
+                        <Countrycard select_country={props.select_country} key={country.alpha3Code} data={country} toggle_render_true={props.toggle_render_true} />
                     )
                 )}
             </div>

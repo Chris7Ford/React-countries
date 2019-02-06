@@ -1,23 +1,72 @@
 import React from "react";
 
-const Countryinfo = (props) => {
+class Countryinfo extends React.Component {
 
-    let bigStyle = {
-        backgroundImage: `url('${props.data.flag}')`
+    constructor() {
+        super();
+        this.state = {
+            neighbors: null,
+            neighbors_loaded: false
+        }
+        this.get_neighboring_flags = this.get_neighboring_flags.bind(this);
     }
 
-    return(
-        <div className="col-7">
-            <div class="card cinfo text-center info">
-            <img src={props.data.flag} className="bg"/>
-              <div class="card-body">
-                <h5 class="card-title">{props.data.name}</h5>
-                <p class="card-text">Capital: {props.data.capital}</p>
-                <a href="#" class="btn btn-primary">More information</a>
-              </div>
+    get_neighboring_flags = (props) => {
+        this.setState({neighbors: [], neighbors_loaded: false});
+        for (let i = 0; i < props.data.borders.length; i++) {
+            fetch(`https://restcountries.eu/rest/v2/alpha/${props.data.borders[i]}`)
+                .then(res => res.json())
+                .then(data => {
+                    this.setState({ neighbors: [...this.state.neighbors, data.flag], neighbors_loaded: true })
+            });
+        }
+        setTimeout(() => {
+            this.props.toggle_render();
+        }, 300);
+    }
+
+    componentDidMount() {
+        if (this.props.render_neighbor)
+            this.get_neighboring_flags(this.props);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        setTimeout(() => {
+            if (this.props.render_neighbor)
+                this.get_neighboring_flags(this.props);
+          }, 100);
+    }
+
+    render() {
+        return(
+            <div className="col-7">
+                <div className="card cinfo text-center info">
+                <img src={this.props.data.flag} className="bg"/>
+                  <div className="card-body">
+                    <h5 className="card-title">{this.props.data.name}</h5>
+                    <p className="card-text">
+                        Capital: {this.props.data.capital} <br />
+                        Region: {this.props.data.region} <br />
+                        Subregion: {this.props.data.subregion} <br />
+                        Population: {this.props.data.population} <br />
+                        Area: {this.props.data.area} <br />
+                        If you originated from {this.props.data.name}, then you are {this.props.data.demonym} <br />
+                        Currencies: {this.props.data.currencies.map(currency => (
+                            `${currency.name} (${currency.symbol}) `
+                        ))} <br />
+                        Languages: {this.props.data.languages.map(currency => (
+                            `${currency.name} (${currency.nativeName}) `
+                        ))} <br />
+                        Neighbors: {this.state.neighbors_loaded && this.state.neighbors.map(neighbor => (
+                            <img src={neighbor} className="thumb" key={neighbor.split("/")[neighbor.length - 1]}/>
+                        ))}
+                    </p>
+                    <a href="#" className="btn btn-primary">More information</a>
+                  </div>
+                </div>
             </div>
-        </div>
-    )
+        )
+    }
 }
 
 export default Countryinfo;
